@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#256abf">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="离线记账">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>离线记账</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <p id="boot" class="auth-note">正在加载…若一直停留在此页面,请通过 HTTPS 或 localhost 打开(不支持 file://)。</p>
+
+  <main id="auth" class="auth" hidden>
+    <img src="icons/icon-192.png" alt="" width="72" height="72">
+    <h1>离线记账</h1>
+    <form id="auth-form">
+      <p id="auth-hint" class="auth-note"></p>
+      <label>密码
+        <input id="passcode" type="password" required>
+      </label>
+      <label id="confirm-row">再次输入密码
+        <input id="passcode-confirm" type="password" autocomplete="new-password">
+      </label>
+      <p id="auth-error" class="error" role="alert"></p>
+      <button id="auth-submit" class="primary"></button>
+    </form>
+  </main>
+
+  <div id="app" hidden>
+    <header class="topbar">
+      <h1>离线记账</h1>
+      <button id="lock">锁定</button>
+    </header>
+
+    <main>
+      <label class="sync primary">
+        同步快捷指令记录
+        <input id="sync" class="visually-hidden" type="file" accept=".csv,text/csv,text/plain">
+      </label>
+      <div id="report" class="card" role="status" hidden></div>
+      <p id="corrupt" class="error" role="alert" hidden></p>
+
+      <div class="month-row">
+        <button id="prev-month" aria-label="上个月">‹</button>
+        <input id="month" type="month" aria-label="选择月份" required>
+        <button id="next-month" aria-label="下个月">›</button>
+      </div>
+
+      <section class="card">
+        <h2>本月合计</h2>
+        <p id="total" class="hero"></p>
+        <p id="count" class="muted"></p>
+      </section>
+
+      <section class="card">
+        <h2>每日支出(RM)</h2>
+        <div id="chart" class="chart"></div>
+        <details id="daily-details">
+          <summary>查看每日明细</summary>
+          <table class="daily">
+            <thead><tr><th scope="col">日期</th><th scope="col" class="num">金额</th></tr></thead>
+            <tbody id="daily-table"></tbody>
+          </table>
+        </details>
+      </section>
+
+      <div class="columns">
+        <section class="card"><h2>按商户</h2><div id="by-merchant" class="breakdown"></div></section>
+        <section class="card"><h2>按卡片</h2><div id="by-card" class="breakdown"></div></section>
+      </div>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>明细</h2>
+          <button id="add" class="primary small">记一笔</button>
+        </div>
+        <ul id="list" class="list"></ul>
+      </section>
+
+      <section class="tools">
+        <button id="export">导出全部 CSV</button>
+        <button id="wipe" class="danger">清除全部数据</button>
+      </section>
+      <p class="muted center">导出的 CSV 为明文,请妥善保管。本应用只读取和记录,不会动用任何资金。</p>
+    </main>
+  </div>
+
+  <dialog id="entry-dialog">
+    <form id="entry-form">
+      <h2 id="entry-title"></h2>
+      <label>时间 <input id="entry-date" type="datetime-local" required></label>
+      <label>金额(RM) <input id="entry-amount" inputmode="decimal" autocomplete="off" required></label>
+      <label>商户 <input id="entry-merchant" autocomplete="off" required></label>
+      <label>卡片 <input id="entry-card" autocomplete="off"></label>
+      <p id="entry-error" class="error" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" id="entry-cancel">取消</button>
+        <button class="primary">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
